@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>フラッシュカード 自動表示</title>
+<style>
+  body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+  .card { font-size: 48px; margin: 50px; }
+  #startBtn { font-size: 24px; padding: 10px 20px; }
+  #formLink a { font-size: 24px; color: blue; text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div id="instruction">
+  これから英字20個を順番にフラッシュカードのように表示しますので、できる限り覚えてください。。書いたり声に出して覚えるのはやめてください。あとでgoogleフォームにて覚えたものを選択してください。準備ができたら「開始」を押してください。
+</div>
+
+<div id="card" class="card"></div>
+<button id="startBtn">開始</button>
+
+<div id="formLink" style="display:none; margin-top:20px;">
+  <a href="https://docs.google.com/forms/d/1eCE__8TzlW35ZiUdagdvVhIwvfNtrU6tihyS-Yt7MHg/viewform" target="_blank">
+    回答フォームへ
+  </a>
+</div>
+
+<script>
+  const allStimuli = [
+    {letter: 'ab', color: '#550000'},
+    {letter: 'cd', color: '#aa0000'},
+    {letter: 'ef', color: '#ff3333'},
+    {letter: 'gh', color: '#ff6666'},
+    {letter: 'ij', color: '#ff9999'},
+    {letter: 'kl', color: '#550000'},
+    {letter: 'mn', color: '#ff6666'},
+    {letter: 'op', color: '#ff9999'},
+    {letter: 'qr', color: '#ff3333'},
+    {letter: 'st', color: '#aa0000'},
+    {letter: 'uv', color: '#550000'},
+    {letter: 'wx', color: '#ff6666'},
+    {letter: 'yz', color: '#ff9999'},
+    {letter: 'ba', color: '#ff3333'},
+    {letter: 'dc', color: '#aa0000'},
+    {letter: 'fe', color: '#550000'},
+    {letter: 'hg', color: '#ff3333'},
+    {letter: 'ji', color: '#ff9999'},
+    {letter: 'lk', color: '#ff6666'},
+    {letter: 'nm', color: '#aa0000'}
+  ];
+
+  const startStimuli = allStimuli.slice(0,2); // ab, cd
+  const endStimuli = allStimuli.slice(4,6);   // ij, kl
+  const middleStimuli = allStimuli.filter(s => !startStimuli.includes(s) && !endStimuli.includes(s));
+  
+  // 中間16個をシャッフル
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+  shuffleArray(middleStimuli);
+  
+  const displaySequence = [...startStimuli, ...middleStimuli, ...endStimuli];
+
+  const cardDiv = document.getElementById('card');
+  const startBtn = document.getElementById('startBtn');
+  let current = 0;
+  let intervalId;
+
+  function showNextCard() {
+    if(current < displaySequence.length){
+      const item = displaySequence[current];
+      cardDiv.textContent = item.letter;
+      cardDiv.style.color = item.color;
+      current++;
+    } else {
+      clearInterval(intervalId);
+      cardDiv.textContent = "表示終了！";
+      document.getElementById('formLink').style.display = 'block';
+    }
+  }
+
+  startBtn.addEventListener('click', () => {
+    startBtn.style.display = 'none';
+    showNextCard();
+    intervalId = setInterval(showNextCard, 2000); // 2秒ごとに表示
+  });
+</script>
+
+</body>
+</html>
